@@ -1,10 +1,8 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
     branches:
-      - main  # หรือเปลี่ยนเป็นชื่อ branch ที่คุณใช้
-
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,7 +12,7 @@ jobs:
         with:
           channel: 'stable'
       - run: flutter pub get
-      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - run: flutter build web --release --base-href "/valentine/"
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
