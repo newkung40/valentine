@@ -227,7 +227,7 @@ Widget _buildLoveStories(BuildContext context, {required bool isMobile}) {
         );
 }
 
-class LoveStoryCard extends StatelessWidget {
+class LoveStoryCard extends StatefulWidget {
   final String image;
   final String title;
   final String text;
@@ -235,36 +235,58 @@ class LoveStoryCard extends StatelessWidget {
   const LoveStoryCard({super.key, required this.image, required this.title, required this.text});
 
   @override
+  State<LoveStoryCard> createState() => _LoveStoryCardState();
+}
+
+class _LoveStoryCardState extends State<LoveStoryCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.asset(
-              image,
-              height: 240,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              alignment: Alignment.center, // เปลี่ยนมาจัดกลางเพื่อให้เห็นใบหน้าชัดขึ้น
-            ),
+    // กำหนดค่าการเปลี่ยนแปลงสำหรับตอน hover
+    final transform = _isHovered
+        ? (Matrix4.identity()..scale(1.03)..translate(0.0, -8.0)) // ขยายและยกขึ้น
+        : Matrix4.identity();
+    final elevation = _isHovered ? 16.0 : 3.0; // เพิ่มเงา
+
+    return MouseRegion(
+      onEnter: (event) => setState(() => _isHovered = true),
+      onExit: (event) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click, // เปลี่ยนเคอร์เซอร์เป็นรูปมือ
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: transform,
+        child: Card(
+          margin: const EdgeInsets.all(10),
+          elevation: elevation,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                child: Image.asset(
+                  widget.image,
+                  height: 240,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.pink)),
+                    const SizedBox(height: 8),
+                    Text(widget.text, style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.pink)),
-                const SizedBox(height: 8),
-                Text(text, style: const TextStyle(fontSize: 14, color: Colors.black87)),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
